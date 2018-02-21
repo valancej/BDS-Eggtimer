@@ -3,6 +3,9 @@ import http.client
 import json
 import time
 import psycopg2
+import threading
+
+
 
 # Hub Auth
 conn = http.client.HTTPSConnection("hubeval74.blackducksoftware.com")
@@ -21,8 +24,27 @@ auth_obj = json.loads(data)
 bearerToken = auth_obj["bearerToken"]
 
 
+# DB Connect
+try:
+    connect_str = "dbname='notifications' user='blackduck' host='postgres' password='blackduck'"
+    # use our connection values to establish a connection
+    conn = psycopg2.connect(connect_str)
+    cursor = conn.cursor()
+    print("Connected!")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS notifications (id serial primary key, posted_date date not null, notification_id varchar(255) not null)""")
+    cursor.execute("INSERT INTO public.notifications (posted_date, notification_id) VALUES (%s, %s)", ('2018-01-22', 'fjdaklfjadkls'))
+    cursor.execute("""SELECT * FROM notifications""")
+    rows = cursor.fetchall()
+    print(rows)
+
+except Exception as e:
+    print("Uh oh, can't connect. Invalid dbname, user or password?")
+    print(e)
+
+
 # Get Policy overrides
 def getNewPolicyOverrideNotifications(bearerToken):
+    threading.Timer(5.0, getNewPolicyOverrideNotifications).start()
     authHeaders = {
         'authorization': "Bearer " + bearerToken
     }
@@ -43,23 +65,6 @@ def getNewPolicyOverrideNotifications(bearerToken):
         formattedTimeStamp = time.strftime("%Y-%m-%d", ts)
         print(formattedTimeStamp)
 
-    return
+
 
 getNewPolicyOverrideNotifications(bearerToken)
-
-# DB Connect
-try:
-    connect_str = "dbname='notifications' user='blackduck' host='postgres' password='blackduck'"
-    # use our connection values to establish a connection
-    conn = psycopg2.connect(connect_str)
-    cursor = conn.cursor()
-    print("Connected!")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS notifications (id serial primary key, posted_date date not null, notification_id varchar(255) not null)""")
-    cursor.execute("INSERT INTO public.notifications (posted_date, notification_id) VALUES (%s, %s)", ('2018-01-22', 'fjdaklfjadkls'))
-    cursor.execute("""SELECT * FROM notifications""")
-    rows = cursor.fetchall()
-    print(rows)
-
-except Exception as e:
-    print("Uh oh, can't connect. Invalid dbname, user or password?")
-    print(e)
