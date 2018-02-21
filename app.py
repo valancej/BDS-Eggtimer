@@ -8,7 +8,7 @@ import threading
 
 
 # Hub Auth
-conn = http.client.HTTPSConnection("hubeval74.blackducksoftware.com")
+hubConn = http.client.HTTPSConnection("hubeval74.blackducksoftware.com")
 hubUserId = "00000000-0000-0000-0001-000000000001"
 
 headers = {
@@ -16,9 +16,9 @@ headers = {
     'cache-control': "no-cache",
 }
 
-conn.request("POST", "/api/tokens/authenticate", headers=headers)
+hubConn.request("POST", "/api/tokens/authenticate", headers=headers)
 
-res = conn.getresponse()
+res = hubConn.getresponse()
 data = res.read().decode("utf-8")
 auth_obj = json.loads(data)
 bearerToken = auth_obj["bearerToken"]
@@ -28,8 +28,8 @@ bearerToken = auth_obj["bearerToken"]
 try:
     connect_str = "dbname='notifications' user='blackduck' host='postgres' password='blackduck'"
     # use our connection values to establish a connection
-    conn = psycopg2.connect(connect_str)
-    cursor = conn.cursor()
+    dbConn = psycopg2.connect(connect_str)
+    cursor = dbConn.cursor()
     print("Connected!")
     cursor.execute("""CREATE TABLE IF NOT EXISTS notifications (id serial primary key, posted_date date not null, notification_id varchar(255) not null)""")
     cursor.execute("INSERT INTO public.notifications (posted_date, notification_id) VALUES (%s, %s)", ('2018-01-22', 'fjdaklfjadkls'))
@@ -44,13 +44,16 @@ except Exception as e:
 
 # Get Policy overrides
 def getNewPolicyOverrideNotifications(bearerToken):
-    threading.Timer(5.0, getNewPolicyOverrideNotifications).start()
+
+    threading.Timer(600.0, getNewPolicyOverrideNotifications, [bearerToken]).start()
+    print("Thread running")
+
     authHeaders = {
         'authorization': "Bearer " + bearerToken
     }
-    conn.request("GET", "/api/v1/users/" + hubUserId + "/notifications?limit=100&offset=0&states=NEW&filter=notificationType%3Apolicy_override", headers=authHeaders)
+    hubConn.request("GET", "/api/v1/users/" + hubUserId + "/notifications?limit=100&offset=0&states=NEW&filter=notificationType%3Apolicy_override", headers=authHeaders)
 
-    res = conn.getresponse()
+    res = hubConn.getresponse()
     data = res.read().decode("utf-8")
 
     notification_obj = json.loads(data)

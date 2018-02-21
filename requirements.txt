@@ -1,3 +1,1 @@
-flask
 psycopg2
-redis
