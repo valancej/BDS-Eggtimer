@@ -2,7 +2,7 @@ import time
 import http.client
 import json
 import time
-#import psycopg2
+import psycopg2
 
 # Hub Auth
 conn = http.client.HTTPSConnection("hubeval74.blackducksoftware.com")
@@ -39,8 +39,9 @@ def getNewPolicyOverrideNotifications(bearerToken):
         print(item['notification']['createdOn'])
 
         timestamp = item['notification']['createdOn']
-
-        notificationStructure = {"id": item['notification']['id'], "createdOn": item['notification']['createdOn']}
+        ts = time.strptime(timestamp[:19], "%Y-%m-%dT%H:%M:%S")
+        formattedTimeStamp = time.strftime("%Y-%m-%d", ts)
+        print(formattedTimeStamp)
 
     return
 
@@ -53,6 +54,11 @@ try:
     conn = psycopg2.connect(connect_str)
     cursor = conn.cursor()
     print("Connected!")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS notifications (id serial primary key, posted_date date not null, notification_id varchar(255) not null)""")
+    cursor.execute("INSERT INTO public.notifications (posted_date, notification_id) VALUES (%s, %s)", ('2018-01-22', 'fjdaklfjadkls'))
+    cursor.execute("""SELECT * FROM notifications""")
+    rows = cursor.fetchall()
+    print(rows)
 
 except Exception as e:
     print("Uh oh, can't connect. Invalid dbname, user or password?")
