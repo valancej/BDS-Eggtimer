@@ -1,10 +1,8 @@
-import time
 import http.client
 import json
 import yaml
 import time
 import psycopg2
-import threading
 
 # Import config file
 with open("config.yml", "r") as ymlfile:
@@ -35,9 +33,6 @@ try:
     cursor = dbConn.cursor()
     print("Database connection succeeded.")
     cursor.execute("""CREATE TABLE IF NOT EXISTS notifications (id serial primary key, posted_date date not null, notification_id varchar(255) not null)""")
-    cursor.execute("""SELECT * FROM notifications""")
-    rows = cursor.fetchall()
-    print(rows)
 
 except Exception as e:
     print("Cannot connect to database. Invalid dbname, user or password.")
@@ -83,7 +78,6 @@ def getNewPolicyOverrideNotifications():
         ts = time.strptime(timestamp[:19], "%Y-%m-%dT%H:%M:%S")
         formattedTimeStamp = time.strftime("%Y-%m-%d", ts)
         print(formattedTimeStamp)
-
 
 while True:
     print("Process running.")
