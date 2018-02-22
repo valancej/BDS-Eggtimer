@@ -1,18 +1,39 @@
 import time
 import http.client
 import json
+import yaml
 import time
 import psycopg2
 import threading
 
 
+### Import config file
+with open("config.yml", "r") as ymlfile:
+    cfg = yaml.load(ymlfile)
 
-# Hub Auth
-hubConn = http.client.HTTPSConnection("hubeval74.blackducksoftware.com")
+### Set Black Duck Hub variables from config.yml
+blackDuckHubHost = cfg['blackduck']['hubHost']
+blackDuckHubAuthToken = cfg['blackduck']['hubUserAuthToken']
+
+### Todo - allign userId with appropriate user
 hubUserId = "00000000-0000-0000-0001-000000000001"
 
+###
+# Set postgres variables from config.yml
+###
+DATABASE_CONFIG = {
+    'host': cfg['postgres']['host'],
+    'dbname': cfg['postgres']['dbname'],
+    'user': cfg['postgres']['user'],
+    'password': cfg['postgres']['host']
+}
+
+
+# Hub Auth
+hubConn = http.client.HTTPSConnection(blackDuckHubHost)
+
 headers = {
-    'authorization': "token MDBjOWU1YjItOWE1OC00YTZiLWE4MzktOTE3MWZiMDg1YzI5OjIyY2Y3YTQzLTYwYTctNGQ1My05NWI5LWFiM2Q1MWRkYWRjZg==",
+    'authorization': blackDuckHubAuthToken,
     'cache-control': "no-cache",
 }
 
