@@ -1,0 +1,11 @@
+# Config file for Black Duck Hub and postgres
+#
+# Reminder to put 'token ' in front of auth token
+blackduck:
+    hubHost: "hubeval74.blackducksoftware.com"
+    hubUserAuthToken: "token MDBjOWU1YjItOWE1OC00YTZiLWE4MzktOTE3MWZiMDg1YzI5OjIyY2Y3YTQzLTYwYTctNGQ1My05NWI5LWFiM2Q1MWRkYWRjZg=="
+postgres:
+    host: "postgres"
+    dbname: "notifications"
+    user: "blackduck"
+    password: "blackduck"

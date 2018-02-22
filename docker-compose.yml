@@ -11,13 +11,20 @@ services:
       - ./postgres-data/postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  web:
+  fetchnotifications:
     depends_on:
       - postgres
-    build: .
+    build: ./fetchnotifications
     ports:
       - 5000:5000
     volumes:
-      - .:/web
+      - .:/fetchnotifications
     environment:
       DATABASE_URL: postgres://blackduck@postgres/notifications
+  reminder:
+    depends_on:
+      - postgres
+    build: ./reminder
+    environment:
+      DATABASE_URL: postgres://blackduck@postgres/notifications
+      
