@@ -30,19 +30,22 @@ DATABASE_CONFIG = {
 
 
 # Hub Auth
-hubConn = http.client.HTTPSConnection(blackDuckHubHost)
+try:
+    hubConn = http.client.HTTPSConnection(blackDuckHubHost)
+    headers = {
+        'authorization': blackDuckHubAuthToken,
+        'cache-control': "no-cache",
+    }
+    hubConn.request("POST", "/api/tokens/authenticate", headers=headers)
+    res = hubConn.getresponse()
+    data = res.read().decode("utf-8")
+    auth_obj = json.loads(data)
+    bearerToken = auth_obj["bearerToken"]
+    print("Hub Authorization succeeded.")
 
-headers = {
-    'authorization': blackDuckHubAuthToken,
-    'cache-control': "no-cache",
-}
-
-hubConn.request("POST", "/api/tokens/authenticate", headers=headers)
-
-res = hubConn.getresponse()
-data = res.read().decode("utf-8")
-auth_obj = json.loads(data)
-bearerToken = auth_obj["bearerToken"]
+except Exception as e:
+    print("Cannot connect to Hub. Invalid token.")
+    print(e)
 
 
 # DB Connect
@@ -51,7 +54,7 @@ try:
     # use our connection values to establish a connection
     dbConn = psycopg2.connect(connect_str)
     cursor = dbConn.cursor()
-    print("Connected!")
+    print("Database connection succeeded.")
     cursor.execute("""CREATE TABLE IF NOT EXISTS notifications (id serial primary key, posted_date date not null, notification_id varchar(255) not null)""")
     cursor.execute("INSERT INTO public.notifications (posted_date, notification_id) VALUES (%s, %s)", ('2018-01-22', 'fjdaklfjadkls'))
     cursor.execute("""SELECT * FROM notifications""")
@@ -59,7 +62,7 @@ try:
     print(rows)
 
 except Exception as e:
-    print("Uh oh, can't connect. Invalid dbname, user or password?")
+    print("Cannot connect to database. Invalid dbname, user or password.")
     print(e)
 
 
