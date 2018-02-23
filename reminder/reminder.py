@@ -53,16 +53,6 @@ def checkDbForReminders():
     dbConnReminder = psycopg2.connect(connect_str)
     cursorReminder = dbConnReminder.cursor()
 
-    requestBody = {
-        "content": "string",
-        "contentType": "string",
-        "createdAt": "2018-02-23T00:46:13.547Z",
-        "notificationState": "NEW",
-        "type": "POLICY_OVERRIDE"
-    }
-
-    jsonBody = json.dumps(requestBody)
-
     cursorReminder.execute("SELECT notification_id FROM public.notifications WHERE posted_date < now() - interval '30 days'")
     rowsTest = cursorReminder.fetchall()
     results = [item for item, in rowsTest]
