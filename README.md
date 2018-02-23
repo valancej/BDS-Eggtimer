@@ -1,4 +1,4 @@
-# Python app with Postgres db
+# Python & Postgres 
 
 Services:
 * fetchnotifications: Fetches new policy overrides every five minutes
