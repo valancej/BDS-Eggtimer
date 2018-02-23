@@ -31,6 +31,18 @@ DATABASE_CONFIG = {
 
 connect_str = "dbname=" + DATABASE_CONFIG['dbname'] +" user=" + DATABASE_CONFIG['user'] +" host=" + DATABASE_CONFIG['host'] +" password=" + DATABASE_CONFIG['password']
 
+##
+# Email
+##
+
+senderEmail = cfg['email']['sender']
+recipientEmail = cfg['email']['recipient']
+msg = MIMEMultipart('alternative')
+msg['Subject'] = cfg['email']['subject']
+msg['From'] = senderEmail
+msg['To'] = recipientEmail
+
+
 def checkDbForReminders():
 
     try:
@@ -59,14 +71,36 @@ def checkDbForReminders():
     dbConnReminder = psycopg2.connect(connect_str)
     cursorReminder = dbConnReminder.cursor()
 
-    cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications")
+    cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications WHERE posted_date < now() - interval '30 days'")
     rowsTest = cursorReminder.fetchall()
 
-    for i in range(len(rowsTest)):
-        projectId = rowsTest[i][1]
-        projectVersionId = rowsTest[i][2]
-        projectLink = "https://" + blackDuckHubHost + "/api/projects/" + projectId + "/versions/" + projectVersionId
-        print(projectLink)
+    if rowsTest:
+            
+        mail = smtplib.SMTP('smtp.gmail.com', 587)
+        mail.ehlo()
+        mail.starttls()      
+        mail.login(cfg['email']['login'], cfg['email']['password'])
+
+        for i in range(len(rowsTest)):
+            projectId = rowsTest[i][1]
+            projectVersionId = rowsTest[i][2]
+            projectLink = "https://" + blackDuckHubHost + "/api/projects/" + projectId + "/versions/" + projectVersionId
+            html = """
+            <html>
+                <head></head>
+                <body>
+                    <p>Black Duck Policy Violation Reminder</p>
+                    <p>Visit project <a href="{0}">{0}</a></p>
+                </body>
+            </html>
+            """
+            final_html = html.format(projectLink)
+            messagePart = MIMEText(final_html, 'html')
+            msg.attach(messagePart)
+            mail.sendmail(senderEmail, recipientEmail, msg.as_string())
+        mail.quit()
+
+
 
 
 

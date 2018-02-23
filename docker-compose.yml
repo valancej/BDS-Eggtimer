@@ -25,6 +25,9 @@ services:
     depends_on:
       - postgres
     build: ./reminder
+    ports:
+      - "25:25"
+      - "587:587"
     environment:
       DATABASE_URL: postgres://blackduck@postgres/notifications
       

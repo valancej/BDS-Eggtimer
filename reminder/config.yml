@@ -10,3 +10,9 @@ postgres:
     user: "blackduck"
     password: "blackduck"
 reminder: "30"
+email:
+    sender: "valancejeremy@gmail.com"
+    recipient: "valancejeremy@gmail.com"
+    subject: "Black Duck Policy Violation Reminder"
+    login: "valancejeremy@gmail.com"
+    password: "password"
