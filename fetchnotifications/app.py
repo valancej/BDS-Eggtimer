@@ -31,7 +31,7 @@ try:
     dbConn = psycopg2.connect(connect_str)
     cursor = dbConn.cursor()
     print("Database connection succeeded.")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS public.notifications (id serial primary key, posted_date date not null, notification_id varchar(255) unique not null)""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS public.notifications (id serial primary key, posted_date date not null, notification_id varchar(255) unique not null, project_id varchar(255), project_version_id varchar(255))""")
     dbConn.commit()
     cursor.close()
     dbConn.close()
@@ -74,13 +74,13 @@ def getNewPolicyOverrideNotifications():
     if notification_obj['items']:
         dbConnNotification = psycopg2.connect(connect_str)
         cursorNotification = dbConnNotification.cursor()
-        
+        print(notification_obj)
         for item in notification_obj['items']:
             timestamp = item['notification']['createdOn']
             ts = time.strptime(timestamp[:19], "%Y-%m-%dT%H:%M:%S")
             formattedTimestamp = time.strftime("%Y%m%d", ts)
             finalTimestamp = datetime.datetime.strptime(formattedTimestamp, '%Y%m%d').date()
-            cursorNotification.execute("INSERT INTO public.notifications (posted_date, notification_id) VALUES (%s, %s) ON CONFLICT DO NOTHING", (finalTimestamp, item['notification']['id']))
+            cursorNotification.execute("INSERT INTO public.notifications (posted_date, notification_id, project_id, project_version_id) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (finalTimestamp, item['notification']['id'], item['notification']['data']['projectId'], item['notification']['data']['projectVersionId']))
 
         
         dbConnNotification.commit()
@@ -94,6 +94,3 @@ while True:
     print("Policy check process running.")
     getNewPolicyOverrideNotifications()
     time.sleep(300)
-
-
-# Check the database for possible reminders

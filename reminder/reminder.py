@@ -4,6 +4,10 @@ import yaml
 import time
 import datetime
 import psycopg2
+import smtplib
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # Import config file
 with open("config.yml", "r") as ymlfile:
@@ -50,14 +54,19 @@ def checkDbForReminders():
         'authorization': "Bearer " + bearerToken
     }
 
+    time.sleep(15)
+
     dbConnReminder = psycopg2.connect(connect_str)
     cursorReminder = dbConnReminder.cursor()
 
-    cursorReminder.execute("SELECT notification_id FROM public.notifications WHERE posted_date < now() - interval '30 days'")
+    cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications")
     rowsTest = cursorReminder.fetchall()
-    results = [item for item, in rowsTest]
-    for i in range(len(results)):
-        print(results[i])
+
+    for i in range(len(rowsTest)):
+        projectId = rowsTest[i][1]
+        projectVersionId = rowsTest[i][2]
+        projectLink = "https://" + blackDuckHubHost + "/api/projects/" + projectId + "/versions/" + projectVersionId
+        print(projectLink)
 
 
 
