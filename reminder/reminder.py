@@ -34,14 +34,12 @@ connect_str = "dbname=" + DATABASE_CONFIG['dbname'] +" user=" + DATABASE_CONFIG[
 ##
 # Email
 ##
-
 senderEmail = cfg['email']['sender']
 recipientEmail = cfg['email']['recipient']
 msg = MIMEMultipart('alternative')
 msg['Subject'] = cfg['email']['subject']
 msg['From'] = senderEmail
 msg['To'] = recipientEmail
-
 
 def checkDbForReminders():
 
@@ -71,6 +69,7 @@ def checkDbForReminders():
     dbConnReminder = psycopg2.connect(connect_str)
     cursorReminder = dbConnReminder.cursor()
 
+    # Need to configure interval. Should be fine for demo purposes
     cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications WHERE posted_date < now() - interval '30 days'")
     rowsTest = cursorReminder.fetchall()
 
