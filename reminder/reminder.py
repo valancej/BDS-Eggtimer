@@ -12,6 +12,7 @@ with open("config.yml", "r") as ymlfile:
 # Set Black Duck Hub variables from config.yml
 blackDuckHubHost = cfg['blackduck']['hubHost']
 blackDuckHubAuthToken = cfg['blackduck']['hubUserAuthToken']
+reminderInterval = cfg['reminder']
 
 ### Todo - allign userId with appropriate user
 hubUserId = "00000000-0000-0000-0001-000000000001"
@@ -28,18 +29,52 @@ connect_str = "dbname=" + DATABASE_CONFIG['dbname'] +" user=" + DATABASE_CONFIG[
 
 def checkDbForReminders():
 
+    try:
+        hubConn = http.client.HTTPSConnection(blackDuckHubHost)
+        headers = {
+            'authorization': blackDuckHubAuthToken,
+            'cache-control': "no-cache",
+        }
+        hubConn.request("POST", "/api/tokens/authenticate", headers=headers)
+        res = hubConn.getresponse()
+        data = res.read().decode("utf-8")
+        auth_obj = json.loads(data)
+        bearerToken = auth_obj["bearerToken"]
+        print("Hub Authorization succeeded.")
+
+    except Exception as e:
+        print("Cannot connect to Hub. Invalid token.")
+        print(e)
+
+    authHeaders = {
+        'authorization': "Bearer " + bearerToken
+    }
+
     dbConnReminder = psycopg2.connect(connect_str)
     cursorReminder = dbConnReminder.cursor()
 
-    cursorReminder.execute("SELECT notification_id FROM public.notifications WHERE posted_date < now() - interval '1 days'")
+    requestBody = {
+        "content": "string",
+        "contentType": "string",
+        "createdAt": "2018-02-23T00:46:13.547Z",
+        "notificationState": "NEW",
+        "type": "POLICY_OVERRIDE"
+    }
+
+    jsonBody = json.dumps(requestBody)
+
+    cursorReminder.execute("SELECT notification_id FROM public.notifications WHERE posted_date < now() - interval '30 days'")
     rowsTest = cursorReminder.fetchall()
-    print(rowsTest)
+    results = [item for item, in rowsTest]
+    for i in range(len(results)):
+        print(results[i])
+
 
 
 while True:
     print("Checking database process running.")
     checkDbForReminders()
-    time.sleep(10000)
+    time.sleep(86400)
 
 
 

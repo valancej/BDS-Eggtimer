@@ -93,7 +93,7 @@ def getNewPolicyOverrideNotifications():
 while True:
     print("Policy check process running.")
     getNewPolicyOverrideNotifications()
-    time.sleep(86400)
+    time.sleep(300)
 
 
 # Check the database for possible reminders

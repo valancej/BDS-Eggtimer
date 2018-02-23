@@ -9,3 +9,4 @@ postgres:
     dbname: "notifications"
     user: "blackduck"
     password: "blackduck"
+reminder: "30"
