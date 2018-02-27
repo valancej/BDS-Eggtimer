@@ -13,7 +13,7 @@
 ## Installation instructions
 
 * Clone repo
-* Edit hub-config.yml file location under fetchnotification directory
+* Edit hub-config.env file
 * Run command below
 
 ```
