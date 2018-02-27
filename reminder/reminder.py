@@ -1,6 +1,5 @@
 import http.client
 import json
-import yaml
 import time
 import datetime
 import psycopg2
@@ -10,15 +9,10 @@ import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# Import config file
-#with open("hub-config.yml", "r") as ymlfile:
-    #cfg = yaml.load(ymlfile)
-
-# Set Black Duck Hub variables from config.yml
+# Set Black Duck Hub variables from config file
 blackDuckHubHost = os.environ["BLACK_DUCK_HUB_HOST"]
 blackDuckHubAuthToken = os.environ["BLACK_DUCK_HUB_AUTH_TOKEN"]
-
-reminderInterval = os.environ["REMINDER"]
+reminderInterval = os.environ['REMINDER']
 
 ### Todo - allign userId with appropriate user
 hubUserId = "00000000-0000-0000-0001-000000000001"
@@ -72,9 +66,9 @@ def checkDbForReminders():
     cursorReminder = dbConnReminder.cursor()
 
     # Need to configure interval. Should be fine for demo purposes
-    #print(cfg['reminder'])
-    #cursorReminder.execute("""SELECT notification_id, project_id, project_version_id FROM public.notifications WHERE posted_date < now() - interval %s""", (cfg['reminder']))
-    cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications")
+    print(reminderInterval)
+    cursorReminder.execute("""SELECT notification_id, project_id, project_version_id FROM public.notifications WHERE posted_date < now() - interval %s""", [reminderInterval])
+    #cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications")
     rowsTest = cursorReminder.fetchall()
 
     if rowsTest:
@@ -104,14 +98,11 @@ def checkDbForReminders():
             mail.sendmail(senderEmail, recipientEmail, msg.as_string())
         mail.quit()
 
-
-
+    else:
+        print("No notifications found. Will retry soon.")
 
 
 while True:
     print("Checking database process running.")
     checkDbForReminders()
     time.sleep(86400)
-
-
-

@@ -1,14 +1,9 @@
 import http.client
 import json
-import yaml
 import time
 import datetime
 import psycopg2
 import os
-
-# Import config file
-#with open("hub-config.yml", "r") as ymlfile:
- #   cfg = yaml.load(ymlfile)
 
 # Set Black Duck Hub variables from config.yml
 blackDuckHubHost = os.environ["BLACK_DUCK_HUB_HOST"]
