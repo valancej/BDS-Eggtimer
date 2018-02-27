@@ -2,8 +2,8 @@
 #
 # Reminder to put 'token ' in front of auth token
 blackduck:
-    hubHost: "hubeval74.blackducksoftware.com"
-    hubUserAuthToken: "token MDBjOWU1YjItOWE1OC00YTZiLWE4MzktOTE3MWZiMDg1YzI5OjQ3Y2Q3Y2VkLTg2N2YtNDI5Yy04Y2E2LTYwZWIwMDA5ZGQ3MQ=="
+    hubHost: "hub.com"
+    hubUserAuthToken: "token "
 postgres:
     host: "postgres"
     dbname: "notifications"
@@ -11,8 +11,8 @@ postgres:
     password: "blackduck"
 reminder: '0 days'
 email:
-    sender: "valancejeremy@gmail.com"
-    recipient: "valancejeremy@gmail.com"
+    sender: "gmail.com"
+    recipient: "@gmail.com"
     subject: "Black Duck Policy Violation Reminder"
-    login: "valancejeremy@gmail.com"
+    login: "@gmail.com"
     password: ""
