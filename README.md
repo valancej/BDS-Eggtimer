@@ -1,4 +1,5 @@
-# Python & Postgres 
+# Black Duck Eggtimer
+* Remind user of policy overrides via email
 
 ## Services:
 * fetchnotifications: Fetches new policy overrides every five minutes
@@ -10,6 +11,5 @@
 * https://hub.docker.com/r/jvalance/hub-timer-reminder
 
 ```
-docker-compose build
 docker-compose up
 ```
