@@ -1,5 +1,4 @@
-FROM python:3
+FROM jvalance/hub-timer-fetch:latest
 ADD . /code
 WORKDIR /code
-RUN pip install -r requirements.txt
 CMD ["./wait-for-it.sh", "db:5432", "--", "python", "-u", "reminder.py"]
