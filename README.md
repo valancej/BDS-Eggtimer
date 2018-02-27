@@ -9,6 +9,7 @@
 
 * https://hub.docker.com/r/jvalance/hub-timer-fetch
 * https://hub.docker.com/r/jvalance/hub-timer-reminder
+* https://hub.docker.com/_/postgres/
 
 ## Installation instructions:
 
