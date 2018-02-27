@@ -17,6 +17,7 @@ services:
     image: jvalance/hub-timer-fetch:latest
     ports:
       - 5000:5000
+    env_file: hub-config.env
     volumes:
       - .:/fetchnotifications
     environment:
@@ -28,6 +29,7 @@ services:
     ports:
       - "25:25"
       - "587:587"
+    env_file: hub-config.env
     volumes:
       - .:/reminder
     environment:
