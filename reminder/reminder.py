@@ -26,7 +26,7 @@ hubUserId = "00000000-0000-0000-0001-000000000001"
 # Set postgres variables from config.yml
 DATABASE_CONFIG = {
     'host': os.environ["POSTGRES_HOST"],
-    'dbname': os.environ["POSTGRES_DB_NAME"],
+    'dbname': os.environ["POSTGRES_DB"],
     'user': os.environ["POSTGRES_USER"],
     'password': os.environ["POSTGRES_PASSWORD"]
 }
