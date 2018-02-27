@@ -10,7 +10,7 @@
 * https://hub.docker.com/r/jvalance/hub-timer-fetch
 * https://hub.docker.com/r/jvalance/hub-timer-reminder
 
-## Installation instructions
+## Installation instructions:
 
 * Clone repo
 * Edit hub-config.env file
