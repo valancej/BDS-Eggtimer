@@ -10,6 +10,12 @@
 * https://hub.docker.com/r/jvalance/hub-timer-fetch
 * https://hub.docker.com/r/jvalance/hub-timer-reminder
 
+## Installation instructions
+
+* Clone repo
+* Edit hub-config.yml file location under fetchnotification directory
+* Run command below
+
 ```
 docker-compose up
 ```
