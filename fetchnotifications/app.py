@@ -6,7 +6,7 @@ import datetime
 import psycopg2
 
 # Import config file
-with open("config.yml", "r") as ymlfile:
+with open("hub-config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile)
 
 # Set Black Duck Hub variables from config.yml

@@ -14,7 +14,7 @@ services:
   fetchnotifications:
     depends_on:
       - postgres
-    build: ./fetchnotifications
+    image: jvalance/hub-timer-fetch:latest
     ports:
       - 5000:5000
     volumes:
@@ -24,10 +24,12 @@ services:
   reminder:
     depends_on:
       - postgres
-    build: ./reminder
+    image: jvalance/hub-timer-reminder:latest
     ports:
       - "25:25"
       - "587:587"
+    volumes:
+      - .:/reminder
     environment:
       DATABASE_URL: postgres://blackduck@postgres/notifications
       

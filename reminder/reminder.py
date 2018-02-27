@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Import config file
-with open("config.yml", "r") as ymlfile:
+with open("hub-config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile)
 
 # Set Black Duck Hub variables from config.yml
@@ -70,11 +70,14 @@ def checkDbForReminders():
     cursorReminder = dbConnReminder.cursor()
 
     # Need to configure interval. Should be fine for demo purposes
-    cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications WHERE posted_date < now() - interval '30 days'")
+    print(cfg['reminder'])
+    #cursorReminder.execute("""SELECT notification_id, project_id, project_version_id FROM public.notifications WHERE posted_date < now() - interval %s""", (cfg['reminder']))
+    cursorReminder.execute("SELECT notification_id, project_id, project_version_id FROM public.notifications")
     rowsTest = cursorReminder.fetchall()
 
     if rowsTest:
-            
+
+        print("Notifications found. Sending email.")    
         mail = smtplib.SMTP('smtp.gmail.com', 587)
         mail.ehlo()
         mail.starttls()      
